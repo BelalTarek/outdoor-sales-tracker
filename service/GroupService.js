@@ -1,12 +1,18 @@
 'use strict';
 
-const Group = require('../dal/GroupDal');
+const groupDal = require('../dal/GroupDal');
 
 
-
-exports.createGroup = function(body) {
-  return new Promise(function(resolve, reject) {
-   Group.createGroup(body,(err, data) => {
+/**
+ * ceate group
+ * This can only be done by the logged in Employee.
+ *
+ * body List Created Group array
+ * returns List
+ **/
+exports.createGroup = function (body) {
+  return new Promise(function (resolve, reject) {
+    groupDal.createGroup(body, (err, data) => {
       if (err || !data) {
         reject({
           resBody: {
@@ -18,7 +24,7 @@ exports.createGroup = function(body) {
         resolve({
           resBody: {
             payload: data,
-            msg: "succeed msg",
+            msg: "server.created.successfully",
             code: 200
           },
         })
@@ -28,10 +34,16 @@ exports.createGroup = function(body) {
 }
 
 
-
-exports.deleteGroup = function(id) {
-  return new Promise(function(resolve, reject) {
-   Group.deleteGroup(id,(err, data) => {
+/**
+ * Delete group
+ * This can only be done by the logged in employee.
+ *
+ * id String The Group that needs to be deleted
+ * returns String
+ **/
+exports.deleteGroup = function (id) {
+  return new Promise(function (resolve, reject) {
+    groupDal.deleteGroup(id, (err, data) => {
       if (err || !data) {
         reject({
           resBody: {
@@ -43,7 +55,7 @@ exports.deleteGroup = function(id) {
         resolve({
           resBody: {
             payload: data,
-            msg: "succeed msg",
+            msg: "Group deleted successfully",
             code: 200
           },
         })
@@ -53,10 +65,15 @@ exports.deleteGroup = function(id) {
 }
 
 
-
-exports.getGroupById = function(id) {
-  return new Promise(function(resolve, reject) {
-   Group.getGroupById(id,(err, data) => {
+/**
+ * Get employee by Id
+ *
+ * id String The name that needs to be fetched. Use user1 for testing.
+ * returns String
+ **/
+exports.getGroupById = function (id) {
+  return new Promise(function (resolve, reject) {
+    groupDal.getGroupById(id, (err, data) => {
       if (err || !data) {
         reject({
           resBody: {
@@ -68,7 +85,7 @@ exports.getGroupById = function(id) {
         resolve({
           resBody: {
             payload: data,
-            msg: "succeed msg",
+            msg: "Group data loaded successfully",
             code: 200
           },
         })
@@ -78,10 +95,14 @@ exports.getGroupById = function(id) {
 }
 
 
-
-exports.listGroup = function() {
-  return new Promise(function(resolve, reject) {
-   Group.listGroup((err, data) => {
+/**
+ * list groups of permessions
+ *
+ * returns String
+ **/
+exports.listGroup = function () {
+  return new Promise(function (resolve, reject) {
+    groupDal.listGroup((err, data) => {
       if (err || !data) {
         reject({
           resBody: {
@@ -93,7 +114,7 @@ exports.listGroup = function() {
         resolve({
           resBody: {
             payload: data,
-            msg: "succeed msg",
+            msg: "Group loaded successfully",
             code: 200
           },
         })
@@ -103,10 +124,16 @@ exports.listGroup = function() {
 }
 
 
-
-exports.updateGroup = function(body) {
-  return new Promise(function(resolve, reject) {
-   Group.updateGroup(body,(err, data) => {
+/**
+ * Updated Group
+ * This can only be done by the logged in employee.
+ *
+ * body Group Updated employee object
+ * returns Group
+ **/
+exports.updateGroupById = function (id, body) {
+  return new Promise(function (resolve, reject) {
+    groupDal.updateGroupById(id, body, (err, data) => {
       if (err || !data) {
         reject({
           resBody: {
@@ -117,8 +144,10 @@ exports.updateGroup = function(body) {
       } else {
         resolve({
           resBody: {
-            payload: data,
-            msg: "succeed msg",
+            payload: {
+              data
+            },
+            msg: "server.updated.successfully",
             code: 200
           },
         })
@@ -126,4 +155,3 @@ exports.updateGroup = function(body) {
     })
   });
 }
-

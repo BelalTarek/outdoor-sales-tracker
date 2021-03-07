@@ -1,195 +1,184 @@
-'use strict';
-var index = require('../index')
+"use strict";
+var index = require("../index");
 
 var User = index.models.User;
 
-
-
 /**
- * Create a list of user
- * This can only be done by the logged in user.
  *
- * body List Create user List
- * returns List
- **/
-exports.createUser = function(body,callback) {
-
-   User.create(body, (err, data) => {
-     if (err) {
-      return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
-    }
-  });
-}
-
-
-/**
- * Deletes a User
- *
- * id String User id to delete
- * returns String
- **/
-exports.deleteUser = function(id,callback) {
-
-   User.deleteOne({_id: id}, (err, data) => {
-     if (err) {
-      return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
-    }
-  });
-}
-
-
-/**
- * Get user by user name
- *
- * id String The id that needs to be fetched. Use user1 for testing. 
+ * body User
  * returns User
  **/
-exports.getUserByName = function(id,callback) {
-
-   User.findOne({_id: id}, (err, data) => {
-     if (err) {
+exports.createUser = function(body, callback) {
+  User.create(body, (err, data) => {
+    if (!err && data) {
+      return callback(null, data);
+    } else if (err) {
       return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
+    } else {
+      return callback(null, null);
     }
   });
-}
-
-
-/**
- * Get All user
- *
- * rps Integer Size of the page results in pagination (optional)
- * rpi Integer Current page index in pagination (optional)
- * returns List
- **/
-exports.listUsers = function(rps,rpi,callback) {
-
-   User.find({}, (err, data) => {
-     if (err) {
-      return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
-    }
-  });
-}
-
+};
 
 /**
- * ListUsers By specific Filters
+ * Delete purchase User by ID
  *
- * rps Integer Size of the page results in pagination (optional)
- * rpi Integer Current page index in pagination (optional)
- * matchingParams MatchingParams The params to fetch users. (optional)
- * returns List
- **/
-exports.listUsersByFilters = function(rps,rpi,matchingParams,callback) {
-
-   User.create(body, (err, data) => {
-     if (err) {
-      return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
-    }
-  });
-}
-
-
-/**
- * Updated user
- * This can only be done by the logged in user.
- *
- * user User Updated user object
- * xAccessToken String user token to check if user authenticated (optional)
- * returns User
- **/
-exports.updateUser = function(user,xAccessToken,callback) {
-
-   User.updateMany({ _id:{$in: body['id']} }, body, { new: true, upsert: true, setDefaultsOnInsert: true }, (err, data) => {
-     if (err) {
-      return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
-    }
-  });
-}
-
-
-/**
- * Updated user
- * This can only be done by the logged in user.
- *
- * id String id that need to be updated
- * user User Updated user object
- * returns User
- **/
-exports.updateUserByName = function(id,user,callback) {
-
-   User.findOneAndUpdate({ _id:body.id}, body, { new: true, upsert: true, setDefaultsOnInsert: true }, (err, data) => {
-     if (err) {
-      return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
-    }
-  });
-}
-
-
-/**
- * Logs user into the system
- * 
- *
- * user User The user email & Password for login
- * returns User
- **/
-exports.userLogin = function(user,callback) {
-
-   User.create(body, (err, data) => {
-     if (err) {
-      return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
-    }
-  });
-}
-
-
-/**
- * Logs out current logged in user session
- * 
- *
+ * adminId Long ID of the applicant that needs to be deleted
  * no response value expected for this operation
  **/
-exports.userLogout = function(callback) {
+exports.deleteUserById = function(id, callback) {
+  User.deleteOne(
+    {
+      _id: id
+    },
+    (err, data) => {
+      if (!err && data) {
+        return callback(null, data);
+      } else if (err) {
+        return callback(err, null);
+      } else {
+        return callback(null, null);
+      }
+    }
+  );
+};
 
-   User.find({}, (err, data) => {
-     if (err) {
+/**
+ *
+ * returns User
+ **/
+exports.listUser = function(rps, rpi, callback) {
+  var totalCount;
+  const pageIndex = rpi || 1;
+  const perPage = rps || 5;
+  User.count((err, count) => {
+    if (!err && count) {
+      totalCount = count;
+      User.find({})
+        .populate("branchId")
+        .populate("createdBy")
+        .populate("groups")
+        .skip(perPage * pageIndex - perPage)
+        .limit(perPage)
+        .exec((err, data) => {
+          if (!err && data) {
+            var numberOfPages = Math.ceil(totalCount / perPage);
+            var response = {
+              data,
+              ResultReport: {
+                totalCount,
+                numberOfPages,
+                pageIndex
+              }
+            };
+            return callback(null, response);
+          } else if (err) {
+            return callback(err, null);
+          } else {
+            return callback(null, null);
+          }
+        });
+    } else if (err) {
       return callback(err, null);
-    } else if (!data) {
-      return callback({error: "Error finding the " + User.toString()}, null);
-    }else {
-      return callback(null, data)
+    } else {
+      return callback(null, null);
     }
   });
-}
+};
 
+/**
+ * Updated User
+ *
+ * body User Updated User object
+ * no response value expected for this operation
+ **/
+exports.updateUserById = function(id, body, callback) {
+  User.findOneAndUpdate(
+    {
+      _id: id
+    },
+    body,
+    {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
+    },
+    (err, data) => {
+      if (!err && data) {
+        return callback(null, data);
+      } else if (err) {
+        return callback(err, null);
+      } else {
+        return callback(null, null);
+      }
+    }
+  );
+};
+
+/**
+ * Updated User
+ *
+ * body User Updated User object
+ * no response value expected for this operation
+ **/
+exports.updateUser = function(body, callback) {
+  const { id, ...rest } = body[0];
+  User.findOneAndUpdate(
+    {
+      _id: id
+    },
+    rest,
+    {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true
+    },
+    (err, data) => {
+      console.log(err, data);
+
+      if (!err && data) {
+        return callback(null, data);
+      } else if (err) {
+        return callback(err, null);
+      } else {
+        return callback(null, null);
+      }
+    }
+  );
+};
+
+exports.findUserByEmail = function(email, callback) {
+  User.findOne({
+    email
+  })
+    .populate("branchId")
+    .populate("createdBy")
+    .populate("groups")
+    .exec((err, data) => {
+      if (!err && data) {
+        return callback(null, data);
+      } else if (err) {
+        return callback(err, null);
+      } else {
+        return callback(null, null);
+      }
+    });
+};
+
+exports.getUserByName = function(phone, callback) {
+  User.findOne({
+    phone
+  })
+    .populate("branchId")
+    .populate("createdBy")
+    .populate("groups")
+    .exec((err, data) => {
+      if (!err && data) {
+        return callback(null, data);
+      } else if (err) {
+        return callback(err, null);
+      } else {
+        return callback(null, null);
+      }
+    });
+};
