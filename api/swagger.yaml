@@ -1,0 +1,892 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a simple MVP"
+  version: "1.0.0"
+  title: "Simple Client MVP"
+host: "incentive-tracking-bff.eu-de.mybluemix.net"
+basePath: "/server"
+tags:
+- name: "Client"
+- name: "user"
+- name: "City"
+- name: "group"
+  description: "Secured User-only calls"
+schemes:
+- "https"
+paths:
+  /client:
+    post:
+      tags:
+      - "Client"
+      operationId: "createClient"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Create New Clients"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Client"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Client"
+        400:
+          description: "Validation Error"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        409:
+          description: "Conflict record"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Client"
+    put:
+      tags:
+      - "Client"
+      summary: "Updated vlient"
+      operationId: "updateClient"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Updated applicant object"
+        required: true
+        schema:
+          $ref: "#/definitions/Client"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Client"
+        400:
+          description: "Invalid ID supplied"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "Record Not Found"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Client"
+  /client/{id}:
+    delete:
+      tags:
+      - "Client"
+      summary: "Delete purchase Client by ID"
+      operationId: "deleteClient"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the Client that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid ID supplied"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "Record Not Found"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Client"
+  /client/list:
+    post:
+      tags:
+      - "Client"
+      operationId: "listClients"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "matchingParams"
+        description: "Dates and others"
+        required: false
+        schema:
+          type: "object"
+      - name: "rps"
+        in: "query"
+        description: "Size of the page results in pagination"
+        required: false
+        type: "integer"
+      - name: "rpi"
+        in: "query"
+        description: "Current page index in pagination"
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Client"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Client"
+  /user:
+    get:
+      tags:
+      - "user"
+      summary: "Get All user"
+      operationId: "listUsers"
+      parameters:
+      - name: "rps"
+        in: "query"
+        description: "Size of the page results in pagination"
+        required: false
+        type: "integer"
+      - name: "rpi"
+        in: "query"
+        description: "Current page index in pagination"
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      security:
+      - agentPortal_auth:
+        - "write:loans"
+        - "read:loans"
+      x-swagger-router-controller: "User"
+    post:
+      tags:
+      - "user"
+      summary: "Create a list of user"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Create user List"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "Validation Error"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        409:
+          description: "Conflict record"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      security:
+      - agentPortal_auth:
+        - "write:loans"
+        - "read:loans"
+      x-swagger-router-controller: "User"
+    put:
+      tags:
+      - "user"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      parameters:
+      - in: "body"
+        name: "user"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      - name: "x-access-token"
+        in: "header"
+        description: "user token to check if user authenticated"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid username supplied"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "User not found"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      security:
+      - agentPortal_auth:
+        - "write:loans"
+        - "read:loans"
+      deprecated: false
+      x-swagger-router-controller: "User"
+  /user/login:
+    post:
+      tags:
+      - "user"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "userLogin"
+      parameters:
+      - in: "body"
+        name: "user"
+        description: "The user email & Password for login"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "successful operation"
+          headers:
+            X-access-token:
+              type: "string"
+              description: "authorization token"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid username/password supplied"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      security:
+      - agentPortal_auth:
+        - "write:loans"
+        - "read:loans"
+      x-swagger-router-controller: "User"
+  /user/logout:
+    get:
+      tags:
+      - "user"
+      summary: "Logs out current logged in user session"
+      description: ""
+      operationId: "userLogout"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+      x-swagger-router-controller: "User"
+  /user/listdbyFilters:
+    post:
+      tags:
+      - "user"
+      summary: "ListUsers By specific Filters"
+      operationId: "listUsersByFilters"
+      parameters:
+      - name: "rps"
+        in: "query"
+        description: "Size of the page results in pagination"
+        required: false
+        type: "integer"
+      - name: "rpi"
+        in: "query"
+        description: "Current page index in pagination"
+        required: false
+        type: "integer"
+      - in: "body"
+        name: "matchingParams"
+        description: "The params to fetch users."
+        required: false
+        schema:
+          $ref: "#/definitions/matchingParams"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "Validation Error"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      security:
+      - agentPortal_auth:
+        - "write:loans"
+        - "read:loans"
+      x-swagger-router-controller: "User"
+  /user/{id}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user by user name"
+      operationId: "getUserByName"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The id that needs to be fetched. Use user1 for testing. "
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid username supplied"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "User not found"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      security:
+      - agentPortal_auth:
+        - "write:loans"
+        - "read:loans"
+      x-swagger-router-controller: "User"
+    put:
+      tags:
+      - "user"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUserByName"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "id that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "user"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid username supplied"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "User not found"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      security:
+      - agentPortal_auth:
+        - "write:loans"
+        - "read:loans"
+      x-swagger-router-controller: "User"
+    delete:
+      tags:
+      - "user"
+      summary: "Deletes a User"
+      operationId: "deleteUser"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "User id to delete"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid ID supplied"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "Record Not Found"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      security:
+      - agentPortal_auth:
+        - "write:loans"
+        - "read:loans"
+      x-swagger-router-controller: "User"
+  /group:
+    get:
+      tags:
+      - "group"
+      summary: "list groups of permessions"
+      operationId: "listGroup"
+      produces:
+      - "application/json"
+      - "application/xml"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the employee"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid username/password supplied"
+      x-swagger-router-controller: "Group"
+    post:
+      tags:
+      - "group"
+      summary: "ceate group"
+      description: "This can only be done by the logged in Employee."
+      operationId: "createGroup"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created Group array"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Group"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Group"
+        400:
+          description: "Validation Error"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "Record Not Found"
+          schema:
+            type: "string"
+        409:
+          description: "Conflict record"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Group"
+    put:
+      tags:
+      - "group"
+      summary: "Updated Group"
+      description: "This can only be done by the logged in employee."
+      operationId: "updateGroup"
+      produces:
+      - "application/json"
+      - "application/xml"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Updated employee object"
+        required: true
+        schema:
+          $ref: "#/definitions/Group"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Group"
+        400:
+          description: "Validation Error"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "Record Not Found"
+          schema:
+            type: "string"
+        409:
+          description: "Conflict record"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Group"
+  /group/{id}:
+    get:
+      tags:
+      - "group"
+      summary: "Get employee by Id"
+      operationId: "getGroupById"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The name that needs to be fetched. Use user1 for testing."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid username supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "Group"
+    delete:
+      tags:
+      - "group"
+      summary: "Delete group"
+      description: "This can only be done by the logged in employee."
+      operationId: "deleteGroup"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The Group that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid ID supplied"
+          schema:
+            type: "string"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "string"
+        404:
+          description: "Record Not Found"
+          schema:
+            type: "string"
+        500:
+          description: "Internal Server Error"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "Group"
+  /city:
+    get:
+      tags:
+      - "City"
+      summary: "Get all cities"
+      operationId: "listCity"
+      produces:
+      - "application/json"
+      - "application/xml"
+      parameters:
+      - name: "rps"
+        in: "query"
+        description: "Size of the page results in pagination"
+        required: false
+        type: "integer"
+      - name: "rpi"
+        in: "query"
+        description: "Current page index in pagination"
+        required: false
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the employee"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+          schema:
+            $ref: "#/definitions/City"
+        400:
+          description: "Invalid username/password supplied"
+      x-swagger-router-controller: "City"
+securityDefinitions:
+  agentPortal_auth:
+    type: "oauth2"
+    authorizationUrl: "https://agentPortal.swagger.io/oauth/authorize"
+    flow: "implicit"
+    scopes:
+      write:loans: "modify loans in your account"
+      read:loans: "read your loans"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  Client:
+    type: "object"
+    properties:
+      fullName:
+        type: "string"
+      address:
+        type: "string"
+      coordinates:
+        type: "string"
+      speciality:
+        type: "string"
+      city:
+        $ref: "#/definitions/City"
+      createdBy:
+        $ref: "#/definitions/User"
+    example:
+      speciality: "speciality"
+      address: "address"
+      city:
+        nameAr: "nameAr"
+        nameEn: "nameEn"
+      createdBy:
+        password: "password"
+        phone: "phone"
+        firstLogin: true
+        fullName: "fullName"
+        groups:
+        - permissions: "permissions"
+          name:
+            ar: "ar"
+            en: "en"
+          id: 0
+        - permissions: "permissions"
+          name:
+            ar: "ar"
+            en: "en"
+          id: 0
+        id: "id"
+        cityId:
+          nameAr: "nameAr"
+          nameEn: "nameEn"
+        isActive: true
+        email: "email"
+      coordinates: "coordinates"
+      fullName: "fullName"
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      fullName:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+      phone:
+        type: "string"
+      cityId:
+        $ref: "#/definitions/City"
+      isActive:
+        type: "boolean"
+        default: true
+      firstLogin:
+        type: "boolean"
+        default: true
+      groups:
+        type: "array"
+        items:
+          $ref: "#/definitions/Group"
+      createdBy:
+        $ref: "#/definitions/User"
+    example:
+      password: "password"
+      phone: "phone"
+      firstLogin: true
+      fullName: "fullName"
+      groups:
+      - permissions: "permissions"
+        name:
+          ar: "ar"
+          en: "en"
+        id: 0
+      - permissions: "permissions"
+        name:
+          ar: "ar"
+          en: "en"
+        id: 0
+      id: "id"
+      cityId:
+        nameAr: "nameAr"
+        nameEn: "nameEn"
+      isActive: true
+      email: "email"
+  Group:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        $ref: "#/definitions/Group_name"
+      permissions:
+        type: "string"
+    example:
+      permissions: "permissions"
+      name:
+        ar: "ar"
+        en: "en"
+      id: 0
+  appointment:
+    type: "object"
+    properties:
+      client:
+        $ref: "#/definitions/Client"
+      date:
+        type: "string"
+      city:
+        $ref: "#/definitions/City"
+      coordinates:
+        type: "string"
+      notes:
+        type: "string"
+      createdBy:
+        $ref: "#/definitions/User"
+  City:
+    type: "object"
+    properties:
+      nameAr:
+        type: "string"
+      nameEn:
+        type: "string"
+    example:
+      nameAr: "nameAr"
+      nameEn: "nameEn"
+  matchingParams:
+    type: "object"
+    properties:
+      governantId:
+        type: "string"
+      districtId:
+        type: "string"
+      cityId:
+        type: "string"
+  Group_name:
+    type: "object"
+    properties:
+      ar:
+        type: "string"
+      en:
+        type: "string"
+    example:
+      ar: "ar"
+      en: "en"
